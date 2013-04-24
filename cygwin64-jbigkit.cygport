@@ -1,0 +1,35 @@
+CROSS_HOST="x86_64-pc-cygwin"
+inherit cross
+
+NAME="cygwin64-jbigkit"
+VERSION=2.0
+RELEASE=11
+CATEGORY="Devel"
+SUMMARY="JBIG1 codec for Cygwin 64bit toolchain"
+DESCRIPTION="JBIG-KIT is a software implementation of the JBIG1 data compression
+standard (ITU-T T.82), which was designed for bi-level high-resolution image
+data such as scanned documents. This library is available in portable C code
+and has been widely used in fax products, printer firmware and drivers, and
+document management systems. The package includes a variant implementation of
+just the ITU-T T.85 profile, with memory management optimized for embedded and
+fax applications."
+HOMEPAGE="http://www.cl.cam.ac.uk/~mgk25/jbigkit/"
+SRC_URI="http://www.cl.cam.ac.uk/~mgk25/download/jbigkit-${VERSION}.tar.gz"
+SRC_DIR="jbigkit"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/jbigkit.git/plain/jbigkit-2.0-warnings.patch
+	2.0-build.patch
+"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	cygmake lib CC=${CC} CFLAGS="${CFLAGS} -I${B}/libjbig" AR=${AR} RANLIB=${RANLIB}
+}
+
+src_install() {
+	cd ${B}
+	dobin libjbig/cygjbig-2.dll
+	dolib libjbig/libjbig{,85,.dll}.a
+	doinclude libjbig/jbig{,85,_ar}.h
+}
